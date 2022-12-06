@@ -1,0 +1,10 @@
+{
+  "name": "binar-deployment-be",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "sequelize": "^6.26.0"
+  }
+}
