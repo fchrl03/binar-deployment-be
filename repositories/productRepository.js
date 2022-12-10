@@ -10,6 +10,11 @@ class ProductRepository {
     const getProduct = await Product.findOne({ where: { id } });
     return getProduct;
   }
+
+  static async create({ name, price, stock, picture, available, user_id }) {
+    const createProduct = await Product.create({ name, price, stock, picture, available, user_id });
+    return createProduct;
+  }
 }
 
 module.exports = ProductRepository;

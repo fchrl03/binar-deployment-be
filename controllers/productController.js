@@ -1,4 +1,5 @@
 const productService = require('../services/productService');
+const cloudinary = require('../config/cloudinary');
 
 const getAll = async (req, res) => {
   const { status, status_code, message, data } = await productService.getAll();
@@ -19,4 +20,14 @@ const getByID = async (req, res) => {
   });
 };
 
-module.exports = { getAll, getByID };
+const create = async (req, res) => {
+  const { name, price, stock, picture, available, user_id } = req.body;
+  const { status, status_code, message, data } = await productService.create({ name, price, stock, picture, available, user_id });
+  res.status(status_code).send({
+    status: status,
+    message: message,
+    data: data,
+  });
+};
+
+module.exports = { getAll, getByID, create };
