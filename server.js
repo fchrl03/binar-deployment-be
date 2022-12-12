@@ -12,9 +12,13 @@ app.use(bodyParser.urlencoded({ extended: false }));
 const productController = require('./controllers/productController');
 const authController = require('./controllers/authController');
 
+// Import Middlewares
+const middleware = require('./middlewares/auth');
+
 // Auth
 app.post('/register', authController.register);
 app.post('/login', authController.login);
+pp.get('/auth/me', middleware.authenticate, authController.currentUser);
 
 // Products
 app.get('/products', productController.getAll);
