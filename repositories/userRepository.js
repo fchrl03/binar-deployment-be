@@ -2,12 +2,12 @@ const { User } = require('../models');
 
 class UserRepository {
   static async getByEmail({ email }) {
-    const getUser = await User.findOne({ email });
+    const getUser = await User.findOne({ where: { email } });
     return getUser;
   }
 
   static async getByID({ id }) {
-    const getUser = await User.findOne({ id });
+    const getUser = await User.findOne({ where: { id } });
     return getUser;
   }
 

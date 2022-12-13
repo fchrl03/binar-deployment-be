@@ -1,6 +1,8 @@
 const userRepository = require('../repositories/userRepository');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { OAuth2Client } = require('google-auth-library');
+
 const { JWT, ROLES } = require('../lib/const');
 const SALT_ROUND = 10;
 
@@ -153,6 +155,56 @@ class AuthService {
           };
         }
       }
+    } catch (err) {
+      return {
+        status: false,
+        status_code: 500,
+        message: err.message,
+        data: null,
+      };
+    }
+  }
+
+  static async loginGoogle({ google_credential: googleCredential }) {
+    try {
+      const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+      const userInfo = await client.verifyIdToken({
+        idToken: googleCredential,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
+
+      const { email, name } = userInfo.payload;
+
+      const getUserByEmail = await userRepository.getByEmail({ email });
+
+      if (!getUserByEmail) {
+        await userRepository.create({
+          name,
+          email,
+          role: ROLES.MEMBER,
+        });
+      }
+
+      const token = jwt.sign(
+        {
+          id: getUserByEmail.id,
+          email: getUserByEmail.email,
+        },
+        JWT.SECRET,
+        {
+          expiresIn: JWT.EXPIRED,
+        }
+      );
+
+      return {
+        status: true,
+        status_code: 200,
+        message: 'User berhasil login',
+        data: {
+          token,
+        },
+      };
     } catch (err) {
       return {
         status: false,

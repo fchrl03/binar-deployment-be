@@ -1,5 +1,5 @@
 const productService = require('../services/productService');
-const cloudinary = require('../config/cloudinary');
+// const cloudinary = require('../config/cloudinary');
 
 const getAll = async (req, res) => {
   const { status, status_code, message, data } = await productService.getAll();

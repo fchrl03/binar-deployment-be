@@ -18,7 +18,8 @@ const middleware = require('./middlewares/auth');
 // Auth
 app.post('/register', authController.register);
 app.post('/login', authController.login);
-pp.get('/auth/me', middleware.authenticate, authController.currentUser);
+app.get('/auth/me', middleware.authenticate, authController.currentUser);
+app.post('/login-google', authController.loginGoogle);
 
 // Products
 app.get('/products', productController.getAll);
