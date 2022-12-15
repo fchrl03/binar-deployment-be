@@ -1,6 +1,7 @@
 const express = require('express');
 var cors = require('cors');
 const bodyParser = require('body-parser');
+const upload = require('./helpers/fileUploadCloudinary');
 
 const app = express();
 
@@ -24,7 +25,7 @@ app.post('/login-google', authController.loginGoogle);
 // Products
 app.get('/products', productController.getAll);
 app.get('/products/:id', productController.getByID);
-app.post('/products', productController.create);
+app.post('/products', middleware.authenticate, upload.single('picture'), productController.create);
 
 app.listen(process.env.PORT || 8000, () => {
   console.log(`Server is running in port http://localhost:${process.env.PORT || 8000}`);

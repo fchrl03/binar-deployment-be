@@ -1,5 +1,5 @@
 const productService = require('../services/productService');
-// const cloudinary = require('../config/cloudinary');
+const cloudinary = require('../config/cloudinary');
 
 const getAll = async (req, res) => {
   const { status, status_code, message, data } = await productService.getAll();
@@ -20,13 +20,32 @@ const getByID = async (req, res) => {
   });
 };
 
-const create = async (req, res) => {
-  const { name, price, stock, picture, available, user_id } = req.body;
-  const { status, status_code, message, data } = await productService.create({ name, price, stock, picture, available, user_id });
-  res.status(status_code).send({
-    status: status,
-    message: message,
-    data: data,
+const create = (req, res) => {
+  const fileToUpload = req.file;
+  const { name, price, stock } = req.body;
+  const user_id = req.user.id;
+
+  const fileBase64 = fileToUpload.buffer.toString('base64');
+  const file = `data:${fileToUpload.mimetype};base64,${fileBase64}`;
+  cloudinary.uploader.upload(file, async (err, result) => {
+    if (err) {
+      res.status(400).send(`Gagal mengupload file ke cloudinary: ${err.message}`);
+
+      return;
+    }
+    const { status, status_code, message, data } = await productService.create({
+      name,
+      price,
+      stock,
+      picture: result.url,
+      user_id,
+    });
+
+    res.status(status_code).send({
+      status: status,
+      message: message,
+      data: data,
+    });
   });
 };
 
